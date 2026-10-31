@@ -1,77 +1,122 @@
-// server/src/app.js
-const express = require('express')
-const helmet = require('helmet')
-const cors = require('cors')
-const rateLimit = require('express-rate-limit')
-const errorHandler = require('./middleware/errorHandler')
-const contactRoutes = require('./routes/contact')
-const profileRoutes = require('./routes/profile')
-const projectRoutes = require('./routes/project')
-const authRoutes = require('./routes/auth')
-const skillRoutes = require('./routes/skill')
-const experienceRoutes = require('./routes/experience')
 
-const app = express()
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
-// ─── Security ────────────────────────────────────────────────────────────────
-app.use(helmet())
+const errorHandler = require('./middleware/errorHandler');
 
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
+const contactRoutes = require('./routes/contact');
+const profileRoutes = require('./routes/profile');
+const projectRoutes = require('./routes/project');
+const authRoutes = require('./routes/auth');
+const skillRoutes = require('./routes/skill');
+const experienceRoutes = require('./routes/experience');
+
+const app = express();
+
+// ─── Security ─────────────────────────────────────────────
+app.use(helmet());
+
+const allowedOrigins = (
+  process.env.CORS_ORIGINS || 'http://localhost:5173'
+)
   .split(',')
-  .map((o) => o.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ''));
 
 app.use(
   cors({
-    origin: (origin, cb) => {
-      // Allow requests with no origin (e.g., curl, Postman)
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
-      cb(new Error(`CORS denied for origin: ${origin}`))
-    },
-    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-)
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+        return callback(null, true);
+      }
 
-// ─── Rate limiting ────────────────────────────────────────────────────────────
+      return callback(
+        new Error(`CORS denied for origin: ${origin}`)
+      );
+    },
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
+
+// ─── Rate Limiting ─────────────────────────────────────────
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
+  windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, message: 'Too many requests. Please try again later.' },
-})
+  message: {
+    success: false,
+    message: 'Too many requests. Please try again later.',
+  },
+});
 
 const contactLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 5,
-  message: { success: false, message: 'Too many contact submissions. Please try again later.' },
-})
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many contact submissions. Please try again later.',
+  },
+});
 
-app.use(globalLimiter)
+app.use(globalLimiter);
 
-// ─── Body parsing ─────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: false, limit: '10mb' }))
+// ─── Body Parsing ──────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
-// ─── Health check ─────────────────────────────────────────────────────────────
+// ─── Root Route ────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Welcome to Aman Jaiswal Portfolio Backend!',
+    status: 'Server is running successfully',
+  });
+});
+
+// ─── Health Check ──────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, status: 'OK', timestamp: new Date().toISOString() })
-})
+  res.status(200).json({
+    success: true,
+    message: 'Aman Portfolio API is running',
+  });
+});
 
-// ─── Routes ──────────────────────────────────────────────────────────────────
-app.use('/api/auth', authRoutes)
-app.use('/api/contact', contactLimiter, contactRoutes)
-app.use('/api', profileRoutes)
-app.use('/api/projects', projectRoutes)
-app.use('/api/skills', skillRoutes)
-app.use('/api/experience', experienceRoutes)
+// ─── API Routes ────────────────────────────────────────────
+app.use('/api/auth', authRoutes);
 
-// ─── 404 for unmatched API routes ──────────────────────────────────────────
+app.use('/api/contact', contactLimiter, contactRoutes);
+
+app.use('/api', profileRoutes);
+
+app.use('/api/projects', projectRoutes);
+
+app.use('/api/skills', skillRoutes);
+
+app.use('/api/experience', experienceRoutes);
+
+// ─── API 404 Handler ───────────────────────────────────────
 app.use('/api/*path', (req, res) => {
-  res.status(404).json({ success: false, message: 'API route not found.' })
-})
+  res.status(404).json({
+    success: false,
+    message: 'API route not found.',
+  });
+});
 
-// ─── Error handler ────────────────────────────────────────────────────────────
-app.use(errorHandler)
+// ─── General 404 Handler ───────────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found.',
+  });
+});
 
-module.exports = app
+// ─── Global Error Handler ─────────────────────────────────
+app.use(errorHandler);
+
+module.exports = app;
