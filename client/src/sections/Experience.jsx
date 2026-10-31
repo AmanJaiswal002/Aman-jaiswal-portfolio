@@ -233,7 +233,7 @@ function AddExperienceForm({ onAdd, onCancel }) {
 
 export default function Experience() {
   const { isAuthenticated } = useAuth()
-  const [data, setData] = useState({ educationItems: [] })
+  const [data, setData] = useState({ educationItems: [], certifications: [] })
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -243,7 +243,10 @@ export default function Experience() {
     async function loadExp() {
       try {
         const res = await fetchExperience()
-        if (res.success) setData({ educationItems: res.data.educationItems || [] })
+        if (res.success) setData({
+          educationItems: res.data.educationItems || [],
+          certifications: res.data.certifications || [],
+        })
       } catch (err) {
         console.error('Failed to load education:', err)
       } finally {
