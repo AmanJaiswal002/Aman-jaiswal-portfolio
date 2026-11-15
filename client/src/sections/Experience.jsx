@@ -426,7 +426,7 @@ export default function Experience() {
                 <h3 style={{ fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>Want the full picture?</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>View my resume for a complete overview of my skills and background.</p>
               </div>
-              <a href="/api/resume" target="_blank" rel="noopener noreferrer" className="btn-primary" id="experience-view-resume">
+              <a href={`${import.meta.env.VITE_API_URL || ''}/resume`} target="_blank" rel="noopener noreferrer" className="btn-primary" id="experience-view-resume">
                 <FileText size={16} /> View Resume
               </a>
             </div>

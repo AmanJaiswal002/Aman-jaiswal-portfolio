@@ -142,7 +142,7 @@ export default function Navbar() {
         {/* Resume + Auth + Hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <a
-            href="/api/resume"
+            href={`${import.meta.env.VITE_API_URL || ''}/resume`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary hidden md:inline-flex"
@@ -229,7 +229,7 @@ export default function Navbar() {
               })}
               <li>
                 <a
-                  href="/api/resume"
+                  href={`${import.meta.env.VITE_API_URL || ''}/resume`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"
