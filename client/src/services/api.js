@@ -183,9 +183,10 @@ export async function fetchResume() {
  * @param {File} file - PDF file
  */
 export async function uploadResume(file) {
-  const formData = new FormData()
-  formData.append('resume', file)
   const response = await api.put('/profile', { resume: await fileToBase64(file) })
+  if (!response.data.success) {
+    throw new Error(response.data.message || 'Upload failed')
+  }
   return response.data
 }
 

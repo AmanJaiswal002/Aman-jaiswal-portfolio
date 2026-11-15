@@ -63,8 +63,11 @@ async function getResume(req, res) {
       return res.status(404).json({ success: false, message: 'Resume not found.' })
     }
 
-    // Convert base64 to buffer
-    const base64Data = profile.resume.replace(/^data:application\/pdf;base64,/, '')
+    // Convert base64 to buffer (handle both data URI and raw base64)
+    let base64Data = profile.resume
+    if (base64Data.startsWith('data:')) {
+      base64Data = base64Data.split(',')[1]
+    }
     const buffer = Buffer.from(base64Data, 'base64')
 
     res.set({
