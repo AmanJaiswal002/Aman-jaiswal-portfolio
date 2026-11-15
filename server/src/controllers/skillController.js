@@ -13,6 +13,7 @@ const groupSkills = (skills) => {
       }
     }
     groups[skill.category].skills.push({
+      id: skill._id.toString(),
       name: skill.name,
       level: skill.level,
     })
