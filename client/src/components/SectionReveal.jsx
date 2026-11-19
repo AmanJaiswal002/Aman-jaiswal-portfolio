@@ -10,7 +10,7 @@ export default function SectionReveal({ children, className = '', delay = 0 }) {
   return (
     <motion.div
       className={className}
-      initial="hidden"
+      initial={false}
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
       variants={variants}
