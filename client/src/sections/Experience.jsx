@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Plus, Loader2, FileText, Upload, X, GraduationCap, Award } from 'lucide-react'
 import SectionReveal from '../components/SectionReveal'
 import { useAuth } from '../context/AuthContext'
-import { fetchExperience, createExperience, updateExperience, deleteExperience, uploadResume, getResumeUrl } from '../services/api'
+import { fetchExperience, createExperience, updateExperience, deleteExperience, uploadResume, getResumeUrl, fetchProfile } from '../services/api'
 
 const ICONS = { education: GraduationCap, certification: Award }
 const ACCENT = { education: '#3b82f6', certification: '#06b6d4' }
@@ -13,10 +13,10 @@ const TYPES = [
   { value: 'certification', label: 'Certification', icon: Award },
 ]
 
-function UploadResumeButton({ onUploadSuccess }) {
+function UploadResumeButton({ onUploadSuccess, hasResume }) {
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState(null)
-  const [resumeUploaded, setResumeUploaded] = useState(false)
+  const [resumeUploaded, setResumeUploaded] = useState(hasResume)
   const fileInputRef = useRef(null)
 
   const handleFileChange = async (e) => {
@@ -249,15 +249,22 @@ export default function Experience() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({})
+  const [hasResume, setHasResume] = useState(false)
 
   useEffect(() => {
     async function loadExp() {
       try {
-        const res = await fetchExperience()
-        if (res.success) setData({
-          educationItems: res.data.educationItems || [],
-          certifications: res.data.certifications || [],
+        const [expRes, profileRes] = await Promise.all([
+          fetchExperience(),
+          fetchProfile()
+        ])
+        if (expRes.success) setData({
+          educationItems: expRes.data.educationItems || [],
+          certifications: expRes.data.certifications || [],
         })
+        if (profileRes.success && profileRes.data?.resume) {
+          setHasResume(true)
+        }
       } catch (err) {
         console.error('Failed to load education:', err)
       } finally {
@@ -425,7 +432,7 @@ export default function Experience() {
                 <h3 style={{ fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>Manage Resume</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Upload your latest resume PDF (max 5MB).</p>
               </div>
-              <UploadResumeButton onUploadSuccess={() => {}} />
+              <UploadResumeButton onUploadSuccess={() => {}} hasResume={hasResume} />
             </div>
           </SectionReveal>
         )}
