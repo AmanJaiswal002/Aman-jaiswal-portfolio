@@ -8,17 +8,29 @@ import { fetchProfile, updateProfile as apiUpdateProfile } from '../services/api
 
 const STORAGE_KEY = 'aman-portfolio-profile-photo'
 
+const DEFAULT_PROFILE = {
+  name: 'Aman Jaiswal',
+  title: 'Full Stack Developer',
+  bio: "I'm a B.Tech IT student and passionate Full Stack Developer skilled in the MERN stack, Data Structures & Algorithms, and building scalable, responsive web applications. As a hackathon participant and LeetCode enthusiast, I'm committed to writing clean code, solving problems, and continuously improving my development skills.",
+  goal: "I aim to contribute to impactful projects, grow as a developer, and collaborate with teams that value clean code and great user experiences. My goal is to build scalable, real-world applications that solve meaningful problems.",
+  interests: "Beyond coding, I enjoy exploring new technologies, contributing to open source, participating in hackathons, and continuously learning. I'm also passionate about solving DSA problems on LeetCode and improving my problem-solving skills.",
+  location: 'Meerut, Uttar Pradesh, India',
+  email: 'jaiswalaman1520@gmail.com',
+  github: 'https://github.com/AmanJaiswal002',
+  linkedin: 'https://www.linkedin.com/in/aman-jaiswal-119b77329/',
+  available: true,
+}
+
 export default function About() {
   const { isAuthenticated } = useAuth()
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState(DEFAULT_PROFILE)
   const [editing, setEditing] = useState(false)
   const [editForm, setEditForm] = useState({})
   const [photo, setPhoto] = useState(null)
   const [hovered, setHovered] = useState(false)
   const fileInputRef = useRef(null)
 
-  // Load profile from backend
+  // Load profile from backend (non-blocking)
   useEffect(() => {
     async function loadProfile() {
       try {
@@ -29,8 +41,6 @@ export default function About() {
         }
       } catch (err) {
         console.error('Failed to load profile:', err)
-      } finally {
-        setLoading(false)
       }
     }
     loadProfile()
@@ -101,19 +111,6 @@ export default function About() {
       console.error('Failed to save profile:', err)
       alert('Failed to save profile. Please try again.')
     }
-  }
-
-  if (loading) {
-    return (
-      <section id="about" className="section-padding" style={{ background: '#0d1120' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', padding: '4rem 2rem', color: '#64748b' }}>
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
-            <Image size={36} style={{ color: '#3b82f6' }} />
-          </motion.div>
-          <p style={{ fontSize: '0.9rem', fontWeight: 500, marginTop: '1rem' }}>Loading profile…</p>
-        </div>
-      </section>
-    )
   }
 
   return (
