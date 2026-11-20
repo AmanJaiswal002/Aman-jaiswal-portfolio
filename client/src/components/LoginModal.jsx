@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react'
-import { adminLogin as apiLogin, setAuthToken } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 const inputStyle = (hasError) => ({
   width: '100%',
@@ -26,6 +26,7 @@ function Label({ children }) {
 }
 
 export default function LoginModal({ open, onClose }) {
+  const { login } = useAuth()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -57,9 +58,8 @@ export default function LoginModal({ open, onClose }) {
     setSubmitting(true)
 
     try {
-      const res = await apiLogin({ username, password })
+      const res = await login(username, password)
       if (res.success) {
-        setAuthToken(res.token)
         onClose()
       } else {
         setError(res.message || 'Login failed. Please try again.')
