@@ -215,11 +215,19 @@ export async function fetchResume() {
  * @param {File} file - PDF file
  */
 export async function uploadResume(file) {
-  const response = await api.put('/profile', { resume: await fileToBase64(file) })
-  if (!response.data.success) {
-    throw new Error(response.data.message || 'Upload failed')
+  const base64 = await fileToBase64(file)
+  console.log('Uploading resume, base64 length:', base64.length)
+  try {
+    const response = await api.put('/profile', { resume: base64 })
+    console.log('Upload response:', response.data)
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Upload failed')
+    }
+    return response.data
+  } catch (err) {
+    console.error('Upload error:', err.response?.data || err.message)
+    throw err
   }
-  return response.data
 }
 
 /**

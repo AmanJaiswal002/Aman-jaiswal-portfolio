@@ -40,7 +40,8 @@ function UploadResumeButton({ onUploadSuccess, hasResume }) {
       onUploadSuccess?.()
     } catch (err) {
       console.error('Upload failed:', err)
-      setMessage({ type: 'error', text: 'Upload failed. Please try again.' })
+      const errorMsg = err.response?.data?.message || err.message || 'Upload failed. Please try again.'
+      setMessage({ type: 'error', text: errorMsg })
     } finally {
       setUploading(false)
     }
