@@ -4,8 +4,7 @@ import { motion } from 'framer-motion'
 import { Plus, Loader2, FileText, Upload, X, GraduationCap, Award } from 'lucide-react'
 import SectionReveal from '../components/SectionReveal'
 import { useAuth } from '../context/AuthContext'
-import { fetchExperience, createExperience, updateExperience, deleteExperience } from '../services/api'
-import { uploadResume } from '../services/api'
+import { fetchExperience, createExperience, updateExperience, deleteExperience, uploadResume, getResumeUrl } from '../services/api'
 
 const ICONS = { education: GraduationCap, certification: Award }
 const ACCENT = { education: '#3b82f6', certification: '#06b6d4' }
@@ -426,7 +425,7 @@ export default function Experience() {
                 <h3 style={{ fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>Want the full picture?</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>View my resume for a complete overview of my skills and background.</p>
               </div>
-              <a href={`${import.meta.env.VITE_API_URL || ''}/resume`} target="_blank" rel="noopener noreferrer" className="btn-primary" id="experience-view-resume">
+              <a href={getResumeUrl()} target="_blank" rel="noopener noreferrer" className="btn-primary" id="experience-view-resume">
                 <FileText size={16} /> View Resume
               </a>
             </div>

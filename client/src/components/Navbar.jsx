@@ -5,6 +5,7 @@ import { Menu, X, FileText, LogIn, LogOut, User } from 'lucide-react'
 import { useActiveSection } from '../hooks/useActiveSection'
 import { useAuth } from '../context/AuthContext'
 import LoginModal from './LoginModal'
+import { getResumeUrl } from '../services/api'
 
 const NAV_LINKS = [
   { label: 'Home', href: '#home' },
@@ -142,7 +143,7 @@ export default function Navbar() {
         {/* Resume + Auth + Hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <a
-            href={`${import.meta.env.VITE_API_URL || ''}/resume`}
+            href={getResumeUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary hidden md:inline-flex"
@@ -229,7 +230,7 @@ export default function Navbar() {
               })}
               <li>
                 <a
-                  href={`${import.meta.env.VITE_API_URL || ''}/resume`}
+                  href={getResumeUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"

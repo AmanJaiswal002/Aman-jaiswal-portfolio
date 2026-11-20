@@ -80,12 +80,28 @@ app.get('/', (req, res) => {
 });
 
 // ─── Health Check ──────────────────────────────────────────
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const mongoose = require('mongoose')
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+      })
+    } catch (err) {
+      console.warn('Health check: DB reconnect failed:', err.message)
+    }
+  }
+
   res.status(200).json({
     success: true,
     message: 'Aman Portfolio API is running',
-  });
-});
+    database: dbStatus,
+    timestamp: new Date().toISOString(),
+  })
+})
 
 // ─── API Routes ────────────────────────────────────────────
 app.use('/api/auth', authRoutes);

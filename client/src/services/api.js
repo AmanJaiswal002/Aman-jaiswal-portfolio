@@ -1,11 +1,43 @@
 // src/services/api.js
 import axios from 'axios'
 
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
-  timeout: 15000,
+  baseURL: API_BASE,
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 })
+
+export function getResumeUrl() {
+  return `${API_BASE}/resume`
+}
+
+async function requestWithRetry(config, retries = 2) {
+  try {
+    return await api(config)
+  } catch (err) {
+    const isNetworkError = err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK' || !err.response
+    const isServerError = err.response?.status >= 500
+    const shouldRetry = (isNetworkError || isServerError) && retries > 0
+
+    if (shouldRetry) {
+      await new Promise(r => setTimeout(r, 2000))
+      return requestWithRetry(config, retries - 1)
+    }
+    throw err
+  }
+}
+
+const originalGet = api.get.bind(api)
+const originalPost = api.post.bind(api)
+const originalPut = api.put.bind(api)
+const originalDelete = api.delete.bind(api)
+
+api.get = (url, config) => requestWithRetry({ method: 'GET', url, ...config })
+api.post = (url, data, config) => requestWithRetry({ method: 'POST', url, data, ...config })
+api.put = (url, data, config) => requestWithRetry({ method: 'PUT', url, data, ...config })
+api.delete = (url, config) => requestWithRetry({ method: 'DELETE', url, ...config })
 
 // Token management
 let authToken = null
