@@ -13,9 +13,10 @@ const TYPES = [
   { value: 'certification', label: 'Certification', icon: Award },
 ]
 
-function UploadResumeButton() {
+function UploadResumeButton({ onUploadSuccess }) {
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState(null)
+  const [resumeUploaded, setResumeUploaded] = useState(false)
   const fileInputRef = useRef(null)
 
   const handleFileChange = async (e) => {
@@ -35,8 +36,8 @@ function UploadResumeButton() {
     try {
       await uploadResume(file)
       setMessage({ type: 'success', text: 'Resume uploaded successfully!' })
-      // Reload page to show updated resume
-      setTimeout(() => window.location.reload(), 1500)
+      setResumeUploaded(true)
+      onUploadSuccess?.()
     } catch (err) {
       console.error('Upload failed:', err)
       setMessage({ type: 'error', text: 'Upload failed. Please try again.' })
@@ -49,7 +50,7 @@ function UploadResumeButton() {
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
       <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', borderRadius: '0.5rem', color: '#fff', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', opacity: uploading ? 0.7 : 1 }}>
         <Upload size={16} />
-        {uploading ? 'Uploading...' : 'Upload Resume'}
+        {uploading ? 'Uploading...' : resumeUploaded ? 'Resume Uploaded' : 'Upload Resume'}
         <input
           ref={fileInputRef}
           type="file"
@@ -64,6 +65,17 @@ function UploadResumeButton() {
           {message.type === 'success' ? <FileText size={14} /> : <X size={14} />}
           {message.text}
         </span>
+      )}
+      {resumeUploaded && !uploading && (
+        <a
+          href={getResumeUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-outline"
+          style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+        >
+          <FileText size={14} /> View Resume
+        </a>
       )}
     </div>
   )
@@ -413,7 +425,7 @@ export default function Experience() {
                 <h3 style={{ fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>Manage Resume</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Upload your latest resume PDF (max 5MB).</p>
               </div>
-              <UploadResumeButton />
+              <UploadResumeButton onUploadSuccess={() => {}} />
             </div>
           </SectionReveal>
         )}
