@@ -1,6 +1,6 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { verifyAuth, setAuthToken, clearAuthToken, getAuthToken } from '../services/api'
+import { setAuthToken, clearAuthToken, getAuthToken } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -35,11 +35,8 @@ export function AuthProvider({ children }) {
   }, [checkAuth])
 
   const login = async (username, password) => {
-    const res = await verifyAuth()
-    if (res.success) {
-      return { success: true }
-    }
-    const loginRes = await (await import('../services/api')).adminLogin({ username, password })
+    const { adminLogin } = await import('../services/api')
+    const loginRes = await adminLogin({ username, password })
     if (loginRes.success) {
       setAuthToken(loginRes.token)
       setAdmin(loginRes.admin)
