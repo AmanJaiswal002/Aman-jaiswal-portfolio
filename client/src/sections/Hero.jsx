@@ -148,7 +148,7 @@ export default function Hero() {
             {/* Social links */}
             <motion.div {...fadeUp(0.5)} style={{ display: 'flex', gap: '1.5rem' }}>
               {[
-                { href: 'https://github.com/AmanJaiswal002', icon: <GithubIcon size={20} />, label: 'GitHub' },
+                { href: 'https://github.com/AmanJaiswal002?tab=repositories', icon: <GithubIcon size={20} />, label: 'GitHub' },
                 { href: 'https://www.linkedin.com/in/aman-jaiswal-119b77329/', icon: <LinkedinIcon size={20} />, label: 'LinkedIn' },
               ].map(({ href, icon, label }) => (
                 <a

@@ -11,7 +11,7 @@ const DEFAULT_PROFILE = {
   interests: "Beyond coding, I enjoy exploring new technologies, contributing to open source, participating in hackathons, and continuously learning. I'm also passionate about solving DSA problems on LeetCode and improving my problem-solving skills.",
   location: 'Meerut, Uttar Pradesh, India',
   email: 'jaiswalaman1520@gmail.com',
-  github: 'https://github.com/AmanJaiswal002',
+  github: 'https://github.com/AmanJaiswal002?tab=repositories',
   linkedin: 'https://www.linkedin.com/in/aman-jaiswal-119b77329/',
   available: true,
   photo: null,

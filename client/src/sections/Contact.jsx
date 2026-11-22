@@ -133,7 +133,7 @@ export default function Contact() {
                 { icon: <Mail size={18} />, label: 'Email', value: 'jaiswalaman1520@gmail.com', href: 'mailto:jaiswalaman1520@gmail.com' },
                 { icon: <span style={{fontSize: '18px'}}>📞</span>, label: 'Phone', value: '+91 9335294846', href: 'tel:+919335294848' },
                 { icon: <span style={{fontSize: '18px'}}>📍</span>, label: 'Location', value: 'Meerut, Uttar Pradesh, India', href: '#' },
-                { icon: <GithubIcon size={18} />, label: 'GitHub', value: 'github.com/AmanJaiswal002', href: 'https://github.com/AmanJaiswal002' },
+                { icon: <GithubIcon size={18} />, label: 'GitHub', value: 'github.com/AmanJaiswal002', href: 'https://github.com/AmanJaiswal002?tab=repositories' },
                 { icon: <LinkedinIcon size={18} />, label: 'LinkedIn', value: 'linkedin.com/in/aman-jaiswal-119b77329', href: 'https://www.linkedin.com/in/aman-jaiswal-119b77329/' },
               ].map(({ icon, label, value, href }) => (
                 <a

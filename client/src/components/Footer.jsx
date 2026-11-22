@@ -49,7 +49,7 @@ export default function Footer() {
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             {[
               {
-                href: 'https://github.com/AmanJaiswal002',
+                href: 'https://github.com/AmanJaiswal002?tab=repositories',
                 icon: <GithubIcon size={18} />,
                 label: 'GitHub',
               },
